@@ -1,24 +1,25 @@
-# coding=utf-8
-import pybrain
-from pybrain.supervised.trainers import BackpropTrainer
+# -*- coding: utf-8 -*-
+from pybrain.structure import *
+from pybrain.supervised.trainers import *
+from pybrain.datasets import *
 from pybrain.tools.shortcuts import buildNetwork
-from pybrain.datasets import SupervisedDataSet
 
-net = buildNetwork(2, 3, 1, bias=True, hiddenclass=pybrain.TanhLayer)
-# 建立输入层为2,隐藏层为3,输出层为1的神经网络
+n = buildNetwork(2, 3, 1,bias=True,hiddenclass=TanhLayer)
+
 ds = SupervisedDataSet(2, 1)
-# 建立监督学习的数据训练集
-trainer = BackpropTrainer(net, ds)
-# 反向传播算法训练神经网络
+ds.addSample([0, 0], [0])
+ds.addSample([0, 1], [1])
+ds.addSample([1, 0], [1])
+ds.addSample([1, 1], [0])
 
-ds.addSample((0, 0), (0,))
-ds.addSample((0, 1), (1,))
-ds.addSample((1, 0), (1,))
-ds.addSample((1, 1), (0,))
-# 向数据集里添加数据
+print " begin BP"
+trainer = BackpropTrainer(n, ds, verbose=True, learningrate=0.01)
+print "begin training"
+for i in xrange(1100):
+    trainer.train()
 
-print trainer.train()
-# 一次训练的结果
-print trainer.trainUntilConvergence()
-# 返回一个tuple,是每次训练的结果,直到结果收敛为止
-a=raw_input().split()
+print "return results"
+print n.activate([0, 0])
+print n.activate([0, 1])
+print n.activate([1, 0])
+print n.activate([1, 1])
